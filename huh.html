@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Digital Point System</title>
+    <link rel="stylesheet" href="huh.css">
+   
+</head>
+<body>
+  
+  <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Menu</span>
+  <div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="#">About</a>
+    <a href="#">Services</a>
+    <a href="#">Clients</a>
+    <a href="#">Contact</a>
+    <a href="#" id="logout-btn">Logout</a>
+  </div>
+  
+  <div id="user" class="user">
+    <img id="user-avatar" src="" alt="Avatar" style="width: 50px; border-radius: 100%; height: 50px;">
+    <span id="user-name"></span>
+  </div>
+
+  <h1>
+    <div class="container">
+      <div class="image-div1">
+        <img src="https://scontent.fmnl9-3.fna.fbcdn.net/v/t39.30808-6/275251164_3168881066728188_7614429896767711014_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeG9gxN7qY1gWjMn4olsaqxFtzPymf9usiC3M_KZ_26yIOA3y5XGY00_gCjSFe_KtVNYQHUoFEt-cpYe5MaiZvlO&_nc_ohc=7ttFmGkNAbkQ7kNvgERVspo&_nc_ht=scontent.fmnl9-3.fna&oh=00_AYB0tSU3mDo0AxFH6GV872fsbswTAWXEw346A2cVLl73IQ&oe=66E2030B" alt="" style="width:150px;">
+      </div>
+      <div class="DPS">Digital Point System</div>
+    </div>
+  </h1>
+
+  <section id="student-dashboard">
+    <h2>Student Dashboard</h2>
+    <p>Points: <span id="points-display">0</span></p>
+    <button id="submit-proof-btn">Submit Proof</button>
+    <button id="view-transactions-btn">View Transactions</button>
+  </section>
+
+  <section id="task">
+    <h2>Specific Tasks</h2>
+    <form action="/action_page.php">
+      <input type="checkbox" id="task1" name="task" value="1st" data-points="300">
+      <label for="task1"> HONESTO = 300 pts </label><br><br>
+
+      <input type="checkbox" id="task2" name="task" value="2nd" data-points="200">
+      <label for="task2"> REPORT BULLYING = 200 pts</label><br><br>
+
+      <input type="checkbox" id="task3" name="task" value="3rd" data-points="50">
+      <label for="task3"> HELP CLEANING THE SCHOOL = 50 pts</label><br><br>
+
+      <input type="checkbox" id="task4" name="task" value="4th" data-points="50">
+      <label for="task4"> SEGREGATION OF TRASH = 50 pts</label><br><br>
+
+      <input type="checkbox" id="task5" name="task" value="Boat" data-points="50">
+      <label for="task5"> HELP CLEANING THE BATHROOM = 50 pts</label><br><br>
+    </form>
+  </section>
+
+  <section id="proof-submission">
+    <h2>Submit Proof</h2>
+    <form id="proof-form">
+      <input type="file" id="proof-file" accept=".pdf, .jpg, .png">
+      <textarea id="proof-description" placeholder="Description of the activity"></textarea>
+      <label for="teacher-select">Select Teacher:</label>
+      <select id="teacher-select" name="teacher">
+        <option value="princessharbie04@gmail.com">Princess Harbbie</option>
+        <option value="john.doe@example.com">John Doe</option>
+        <option value="jane.smith@example.com">Jane Smith</option>
+        <!-- Add more options here for other teachers -->
+      </select>
+      <button id="submit-proof-form-btn" type="button">Submit</button>
+    </form>
+  </section>
+
+  <section id="redeem-points">
+    <h2>Redeem Points</h2>
+    <select id="reward-select">
+      <option value="">Select a reward</option>
+      <option value="food-voucher" data-points="100">2 Ballpens (100 pts)</option>
+      <option value="school-supplies" data-points="250">1 whole yellow pad (250 pts)</option>
+      <option value="extra-credit" data-points="50">2 Coupon bonds (50 pts)</option>
+    </select>
+    <button id="redeem-btn" onclick="redeemPoints()">Redeem</button>
+  </section>
+
+  <section id="transactions" style="display:none;">
+    <h2>Transactions</h2>
+    <ul id="transactions-list">
+      <!-- New transactions will be appended here -->
+    </ul>
+  </section>
+
+  <script>
+    // Load user data from local storage
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (user) {
+        document.getElementById('user-avatar').src = user.avatar;
+        document.getElementById('user-name').textContent = user.name;
+        document.getElementById('points-display').textContent = user.points || 0; // Initialize points display
+    } else {
+        // Redirect to signup if no user is found
+        window.location.href = 'signup.html';
+    }
+
+    document.getElementById('logout-btn').addEventListener('click', function() {
+        localStorage.removeItem('user');
+        window.location.href = 'signup.html';
+    });
+
+    function redeemPoints() {
+        const rewardSelect = document.getElementById('reward-select');
+        const selectedOption = rewardSelect.options[rewardSelect.selectedIndex];
+        const pointsCost = parseInt(selectedOption.getAttribute('data-points'), 10);
+
+        if (!selectedOption.value) {
+            alert('Please select a reward.');
+            return;
+        }
+
+        const currentPoints = parseInt(document.getElementById('points-display').textContent, 10);
+
+        if (currentPoints < pointsCost) {
+            alert('Insufficient points.');
+            return;
+        }
+
+        const updatedPoints = currentPoints - pointsCost;
+        document.getElementById('points-display').textContent = updatedPoints;
+
+        // Save updated points to local storage
+        if (user) {
+            user.points = updatedPoints;
+            localStorage.setItem('user', JSON.stringify(user));
+        }
+
+        // Here you can also add code to handle the reward redemption
+        alert('Reward redeemed successfully!');
+    }
+  </script>
+  <script src="huh.js"></script>
+
+</body>
+</html>
